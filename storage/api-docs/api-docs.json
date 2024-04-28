@@ -1,0 +1,152 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Currency Rates API.",
+        "description": "This API provides access to currency exchange rates for each day. It allows users to retrieve rates of currencies for specific dates and perform other related operations..",
+        "contact": {
+            "email": "shahinyamm@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/currencies": {
+            "get": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "Get all currencies with current rates",
+                "description": "Returns a list of all currencies along with their current rates. You can optionally filter currencies based on a specific date.",
+                "operationId": "getCurrencies",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "description": "Filter currencies by date (format: Y-m-d, e.g., 2024-03-11)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/CurrencyWithRate"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Invalid parameter format",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid date format. Date should be in Y-m-d format."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid filter parameter"
+                    }
+                }
+            }
+        },
+        "/currencies/{currency:numCode}": {
+            "get": {
+                "tags": [
+                    "Currencies"
+                ],
+                "summary": "Get a specific currency by its numeric code",
+                "description": "Returns a single currency based on its numCode.",
+                "operationId": "getCurrency",
+                "parameters": [
+                    {
+                        "name": "numCode",
+                        "in": "path",
+                        "description": "Numeric code of the currency",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "051"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CurrencyWithRate"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Currency not found"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CurrencyWithRate": {
+                "title": "Currency with Rate",
+                "description": "Represents a currency along with its rate.",
+                "properties": {
+                    "name": {
+                        "description": "The name of the currency.",
+                        "type": "string"
+                    },
+                    "numCode": {
+                        "description": "The numeric code of the currency.",
+                        "type": "integer"
+                    },
+                    "charCode": {
+                        "description": "The character code of the currency.",
+                        "type": "string"
+                    },
+                    "nominal": {
+                        "description": "The nominal value of the currency.",
+                        "type": "integer"
+                    },
+                    "rate": {
+                        "description": "The exchange rate of the currency.",
+                        "type": "number"
+                    },
+                    "rates": {
+                        "description": "The date for which the rate is applicable (format: Y-m-d).",
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Currencies",
+            "description": "API Endpoints for Currencies"
+        }
+    ]
+}
